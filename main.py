@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
+import plotly.express as px
 
 
 st.title("Weather Forecast for the Next Few Days")
@@ -27,3 +29,26 @@ else:
     plural = ''
 
 st.subheader(f"{selection} for the next {days} day{plural} in {place.title()}")
+
+# # Create some random mock data
+# chart_data = pd.DataFrame(
+#     np.random.randn(20, 3),
+#     columns=['Option A', 'Option B', 'Option C']
+# )
+#
+# # Display a line chart
+# st.line_chart(chart_data)
+#
+# # Sample data
+# df = pd.DataFrame({
+#     "Category": ["X", "Y", "Z"],
+#     "Values": [10, 15, 7]
+# })
+
+dates = ['2026-08-22', '2026-08-23', '2026-08-24']
+temperatures = [90.5, 91.2, 92.3]
+# Create the figure object using plotly express
+fig = px.line(x=dates, y=temperatures, labels={'x': 'Date', 'y': 'Temperature (F)'})
+
+# Display the figure in Streamlit
+st.plotly_chart(fig, use_container_width=None)
