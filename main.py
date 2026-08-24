@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
+from backend import get_data
 
 
 st.title("Weather Forecast for the Next Few Days")
@@ -23,32 +24,20 @@ selection = st.selectbox(
     help="Select either temperature or sky"
 )
 
-if days > 1:
-    plural = 's'
-else:
-    plural = ''
+st.subheader(f"{selection} for the next {days} day{'s' if days > 1 else ''} in {place.title()}")
 
-st.subheader(f"{selection} for the next {days} day{plural} in {place.title()}")
+try:
+    if place:
+        dates, temperatures, skies = get_data(place, days)
 
-# # Create some random mock data
-# chart_data = pd.DataFrame(
-#     np.random.randn(20, 3),
-#     columns=['Option A', 'Option B', 'Option C']
-# )
-#
-# # Display a line chart
-# st.line_chart(chart_data)
-#
-# # Sample data
-# df = pd.DataFrame({
-#     "Category": ["X", "Y", "Z"],
-#     "Values": [10, 15, 7]
-# })
+        # Create the figure object using plotly express
+        fig = px.line(x=dates, y=temperatures, labels={'x': 'Date', 'y': 'Temperature (F)'})
 
-dates = ['2026-08-22', '2026-08-23', '2026-08-24']
-temperatures = [90.5, 91.2, 92.3]
-# Create the figure object using plotly express
-fig = px.line(x=dates, y=temperatures, labels={'x': 'Date', 'y': 'Temperature (F)'})
+        # Display the figure in Streamlit
 
-# Display the figure in Streamlit
-st.plotly_chart(fig, use_container_width=None)
+        if selection == "Temperature":
+            st.plotly_chart(fig, use_container_width=None)
+        else:
+            st.image(image=skies, caption=dates, width=85)
+except KeyError:
+    st.write("You entered a non-existent place or place with no data available.")
