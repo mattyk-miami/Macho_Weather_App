@@ -17,17 +17,18 @@ days = st.slider(
     help="Number of days in forecast (1-5)"
 )
 
-selection = st.selectbox(
-    label="Select data to view:",
-    options=["Temperature", "Sky"],
-    index=0,  # Sets the default selection (0 for the first option, 1 for the second)
-    help="Select either temperature or sky"
-)
+# selection = st.selectbox(
+#     label="Select data to view:",
+#     options=["Temperature", "Sky"],
+#     index=0,  # Sets the default selection (0 for the first option, 1 for the second)
+#     help="Select either temperature or sky"
+# )
 
-st.subheader(f"{selection} for the next {days} day{'s' if days > 1 else ''} in {place.title()}")
+# st.subheader(f"{selection} for the next {days} day{'s' if days > 1 else ''} in {place.title()}")
 
 try:
     if place:
+        st.subheader(f"Temperature for the next {days} day{'s' if days > 1 else ''} in {place.title()}")
         dates, temperatures, feels_like, skies, sky_description = get_data(place, days)
         captions = []
         for i in range(len(dates)):
@@ -42,31 +43,32 @@ try:
 
         # Display the figure in Streamlit
 
-        if selection == "Temperature":
-            st.plotly_chart(fig, use_container_width=None)
-        else:
+        # if selection == "Temperature":
+        st.plotly_chart(fig, use_container_width=None)
+        # else:
             # Total number of images you have
-            total_images = len(skies)
-            images_per_row = 8
+        total_images = len(skies)
+        images_per_row = 8
 
-            # Loop through your images in steps of 8
-            for row_idx in range(0, total_images, images_per_row):
+        st.subheader(f"Sky for the next {days} day{'s' if days > 1 else ''} in {place.title()}")
+        # Loop through your images in steps of 8
+        for row_idx in range(0, total_images, images_per_row):
 
-                # Slice the data for just the current row (up to 8 items)
-                row_images = skies[row_idx: row_idx + images_per_row]
-                row_captions = captions[row_idx: row_idx + images_per_row]
+            # Slice the data for just the current row (up to 8 items)
+            row_images = skies[row_idx: row_idx + images_per_row]
+            row_captions = captions[row_idx: row_idx + images_per_row]
 
-                # Dynamically create exactly enough columns for this row (max 8)
-                cols = st.columns(len(row_images))
+            # Dynamically create exactly enough columns for this row (max 8)
+            cols = st.columns(len(row_images))
 
-                # Render the images and captions side-by-side in this row
-                for col, img, cap in zip(cols, row_images, row_captions):
-                    with col:
-                        st.image(img, width="stretch")
-                        st.markdown(
-                            f"<div style='text-align: center; font-size: 0.85rem;'>{cap}</div>",
-                            unsafe_allow_html=True
-                        )
+            # Render the images and captions side-by-side in this row
+            for col, img, cap in zip(cols, row_images, row_captions):
+                with col:
+                    st.image(img, width="stretch")
+                    st.markdown(
+                        f"<div style='text-align: center; font-size: 0.85rem;'>{cap}</div>",
+                        unsafe_allow_html=True
+                    )
 
 
             # st.image(image=skies, caption=captions, width=85)
